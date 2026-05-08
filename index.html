@@ -1379,40 +1379,69 @@ value="LPU Website">
 
   const btn = document.getElementById('submitBtn');
 
-  btn.textContent = '⏳ SENDING...';
-
   btn.disabled = true;
+
+  btn.textContent = '⏳ SENDING...';
 
   try {
 
-    const formData = new FormData(this);
+    const formData = new FormData();
+
+    formData.append(
+      "access_key",
+      "83358df4-064f-46ab-a434-caaabb4a3b06"
+    );
+
+    formData.append(
+      "name",
+      document.getElementById('name').value
+    );
+
+    formData.append(
+      "email",
+      document.getElementById('email').value
+    );
+
+    formData.append(
+      "subject",
+      document.getElementById('subject').value
+    );
+
+    formData.append(
+      "message",
+      document.getElementById('message').value
+    );
 
     const response = await fetch(
-      'https://api.web3forms.com/submit',
+      "https://api.web3forms.com/submit",
       {
-        method: 'POST',
+        method: "POST",
         body: formData
       }
     );
 
-    const data = await response.json();
+    const result = await response.json();
 
-    if(data.success){
+    console.log(result);
+
+    if(result.success){
 
       showToast(
         'MESSAGE SENT! ✓',
         "We'll get back to you soon."
       );
 
-      this.reset();
+      document
+      .getElementById('contactForm')
+      .reset();
 
     } else {
 
-      console.log(data);
+      console.log(result);
 
       showToast(
         'ERROR',
-        'Failed to send message.',
+        'Failed to send message',
         true
       );
 
@@ -1422,17 +1451,11 @@ value="LPU Website">
 
     console.error(error);
 
-    showToast(
-      'ERROR',
-      'Something went wrong.',
-      true
-    );
-
   }
 
-  btn.textContent = '⚡ SEND MESSAGE';
-
   btn.disabled = false;
+
+  btn.textContent = '⚡ SEND MESSAGE';
 
 });
   ['name','email','subject','message'].forEach(id=>{

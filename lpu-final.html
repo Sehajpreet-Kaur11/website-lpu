@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Lovely Professional University</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --bg:#020c18;--bg2:#041225;--bg3:#071e36;
+      --accent:#00d4ff;--accent2:#0066ff;--accent3:#7b2fff;
+      --glow:0 0 18px rgba(0,212,255,0.55);--glow2:0 0 30px rgba(0,102,255,0.4);
+      --text:#e0f0ff;--text-mute:#6a90b0;--border:rgba(0,212,255,0.18);
+      --card-bg:rgba(4,18,37,0.85);--radius:14px;
+      --font-head:'Orbitron',sans-serif;--font-body:'Syne',sans-serif;
+    }
+    /* ── LIGHT THEME ─────────────────────────────── */
+    body.light-mode{
+      --bg:#f0f4ff;--bg2:#e6ecf8;--bg3:#dce4f5;
+      --text:#0a1628;--text-mute:#4a6080;--border:rgba(0,102,255,0.2);
+      --card-bg:rgba(240,244,255,0.92);
+    }
+    body.light-mode::before{
+      background-image:
+        radial-gradient(1px 1px at 10% 20%,rgba(0,102,255,0.3) 0%,transparent 100%),
+        radial-gradient(1px 1px at 30% 60%,rgba(0,212,255,0.2) 0%,transparent 100%),
+        radial-gradient(1px 1px at 55% 15%,rgba(0,102,255,0.15) 0%,transparent 100%),
+        radial-gradient(1px 1px at 80% 45%,rgba(0,212,255,0.2) 0%,transparent 100%),
+        radial-gradient(1px 1px at 65% 80%,rgba(123,47,255,0.15) 0%,transparent 100%),
+        radial-gradient(1.5px 1.5px at 90% 10%,rgba(0,102,255,0.2) 0%,transparent 100%),
+        radial-gradient(1px 1px at 20% 90%,rgba(0,212,255,0.2) 0%,transparent 100%);
+    }
+    body.light-mode #navbar{background:rgba(240,244,255,0.9);border-bottom:1px solid rgba(0,102,255,0.15)}
+    body.light-mode .form-group input,
+    body.light-mode .form-group textarea,
+    body.light-mode .form-group select{background:rgba(0,0,0,0.04);color:var(--text)}
+    body.light-mode .form-group input::placeholder,
+    body.light-mode .form-group textarea::placeholder{color:rgba(74,96,128,0.5)}
+    body.light-mode .map-embed iframe{filter:none}
+    body.light-mode #toast,body.light-mode #welcome-panel,
+    body.light-mode .modal-box{background:var(--bg2)}
+    body.light-mode ::-webkit-scrollbar-track{background:var(--bg)}
+
+    /* ── THEME TOGGLE ────────────────────────────── */
+    #theme-toggle{
+      position:fixed;bottom:82px;left:30px;width:44px;height:44px;
+      background:var(--card-bg);border:1px solid var(--border);border-radius:10px;
+      color:var(--accent);font-size:1.15rem;cursor:pointer;z-index:900;
+      display:flex;align-items:center;justify-content:center;
+      transition:background .3s,border-color .3s,box-shadow .3s,transform .2s;
+      box-shadow:0 4px 20px rgba(0,0,0,0.3);
+    }
+    #theme-toggle:hover{border-color:var(--accent);box-shadow:var(--glow);transform:scale(1.1)}
+
+    /* ── FEE CALCULATOR FLOATING DROPDOWN ───────── */
+    #fee-calc-dropdown{
+      position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+      width:min(960px,96vw);z-index:800;
+      font-family:var(--font-body);
+    }
+    #fee-calc-tab{
+      display:flex;align-items:center;gap:.7rem;
+      width:100%;padding:13px 24px;
+      background:linear-gradient(135deg,var(--accent3),var(--accent2),var(--accent));
+      border:none;border-radius:14px 14px 0 0;cursor:pointer;
+      font-family:var(--font-head);font-size:.72rem;letter-spacing:2px;
+      color:#fff;text-transform:uppercase;
+      box-shadow:0 -4px 30px rgba(0,212,255,0.25),0 -2px 60px rgba(123,47,255,0.2);
+      transition:opacity .2s;
+    }
+    #fee-calc-tab:hover{opacity:.92}
+    .tab-icon{font-size:1.1rem}
+    .tab-label{flex:1;text-align:left}
+    .tab-arrow{font-size:.65rem;transition:transform .35s ease;opacity:.8}
+    #fee-calc-tab[aria-expanded="true"] .tab-arrow{transform:rotate(180deg)}
+    #fee-calc-panel{
+      max-height:0;overflow:hidden;
+      background:var(--bg2);
+      border:1px solid var(--border);border-bottom:none;
+      transition:max-height .45s cubic-bezier(.4,0,.2,1);
+    }
+    #fee-calc-panel.open{max-height:520px}
+    .fcp-inner{
+      display:grid;grid-template-columns:1fr 2px 1fr;gap:0;
+      padding:1.6rem 1.8rem;max-height:480px;overflow-y:auto;
+    }
+    .fcp-inner::-webkit-scrollbar{width:4px}
+    .fcp-inner::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+    .fcp-heading{font-family:var(--font-head);font-size:.6rem;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:.9rem}
+    .fcp-left,.fcp-right{padding:0 1.2rem}
+    .fcp-left{padding-left:0}
+    .fcp-right{padding-right:0}
+    .fcp-divider{width:1px;background:var(--border);margin:0 .4rem;align-self:stretch}
+    .fcp-row2{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+    .fcp-program-total{display:flex;justify-content:space-between;align-items:center;margin-top:.8rem;padding:.7rem 1rem;background:rgba(0,212,255,0.05);border:1px solid var(--border);border-radius:10px}
+    .calc-field{margin-bottom:1rem}
+    .calc-field label{display:block;font-family:var(--font-head);font-size:.58rem;letter-spacing:2px;color:var(--text-mute);text-transform:uppercase;margin-bottom:.4rem}
+    .calc-field select{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:var(--font-body);font-size:.85rem;outline:none;transition:border-color .3s}
+    .calc-field select:focus{border-color:var(--accent)}
+    body.light-mode .calc-field select{background:rgba(0,0,0,0.04)}
+    .calc-field select option{background:var(--bg2);color:var(--text)}
+    .calc-field input[type=range]{width:100%;-webkit-appearance:none;height:5px;border-radius:3px;background:linear-gradient(90deg,var(--accent2),var(--accent));border:none;padding:0;cursor:pointer;margin-top:.3rem}
+    .calc-field input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);box-shadow:var(--glow);cursor:pointer;border:2px solid var(--bg)}
+    .range-val{font-family:var(--font-head);font-size:.72rem;color:var(--accent);margin-left:.5rem}
+    .calc-checkbox-group{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-top:.3rem}
+    .calc-checkbox{display:flex;align-items:center;gap:.4rem;padding:.4rem .6rem;border:1px solid var(--border);border-radius:7px;cursor:pointer;transition:border-color .3s,background .3s;font-size:.73rem;color:var(--text-mute)}
+    .calc-checkbox.checked{border-color:var(--accent);background:rgba(0,212,255,0.07);color:var(--text)}
+    .check-dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;transition:background .3s,border-color .3s;display:flex;align-items:center;justify-content:center;font-size:7px}
+    .calc-checkbox.checked .check-dot{background:var(--accent);border-color:var(--accent);color:#000;font-weight:900}
+    .calc-checkbox.checked .check-dot::after{content:'✓'}
+    .fee-row{display:flex;justify-content:space-between;align-items:center;padding:.45rem 0;border-bottom:1px solid rgba(0,212,255,0.07);font-size:.78rem}
+    .fee-row:last-child{border-bottom:none}
+    .fee-row .lbl{color:var(--text-mute);font-size:.74rem}
+    .fee-row .val{font-family:var(--font-head);font-size:.78rem;color:var(--text)}
+    .fee-total-row{background:rgba(0,212,255,0.06);border-radius:8px;padding:.65rem .9rem;display:flex;justify-content:space-between;align-items:center;border:1px solid rgba(0,212,255,0.18)}
+    .fee-total-row .lbl{font-family:var(--font-head);font-size:.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
+    .fee-total-row .val{font-family:var(--font-head);font-size:1.15rem;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .scholarship-badge{background:rgba(0,200,81,0.1);border:1px solid rgba(0,200,81,0.3);border-radius:8px;padding:.5rem .8rem;display:flex;align-items:center;gap:.5rem;color:#00c851}
+    .emi-breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;margin-top:.4rem}
+    .emi-option{padding:.55rem;background:rgba(0,102,255,0.06);border:1px solid var(--border);border-radius:7px;text-align:center;cursor:pointer;transition:border-color .3s,background .3s}
+    .emi-option:hover,.emi-option.active{border-color:var(--accent);background:rgba(0,212,255,0.1)}
+    .emi-months{font-family:var(--font-head);font-size:.58rem;letter-spacing:1px;color:var(--text-mute);display:block}
+    .emi-amount{font-family:var(--font-head);font-size:.78rem;color:var(--accent);display:block;margin-top:.15rem}
+    @media(max-width:700px){.fcp-inner{grid-template-columns:1fr;padding:1.2rem}.fcp-divider{display:none}.fcp-left,.fcp-right{padding:0}.fcp-row2{grid-template-columns:1fr}#fee-calc-panel.open{max-height:900px}}
+
+    /* ── AI CHATBOT ───────────────────────────────── */
+    #chat-fab{
+      position:fixed;bottom:30px;right:30px;width:56px;height:56px;
+      background:linear-gradient(135deg,var(--accent3),var(--accent2),var(--accent));
+      border:none;border-radius:50%;color:#fff;font-size:1.4rem;cursor:pointer;z-index:900;
+      box-shadow:0 0 30px rgba(123,47,255,0.5),0 8px 25px rgba(0,0,0,0.3);
+      transition:transform .3s,box-shadow .3s;display:flex;align-items:center;justify-content:center;
+      animation:chatPulse 3s ease-in-out infinite;
+    }
+    @keyframes chatPulse{0%,100%{box-shadow:0 0 20px rgba(123,47,255,0.4),0 8px 20px rgba(0,0,0,0.25)}50%{box-shadow:0 0 40px rgba(0,212,255,0.5),0 8px 30px rgba(0,0,0,0.3)}}
+    #chat-fab:hover{transform:scale(1.12);animation:none;box-shadow:0 0 50px rgba(0,212,255,0.6)}
+    #chat-fab .fab-badge{position:absolute;top:-4px;right:-4px;width:18px;height:18px;background:#ff2d55;border-radius:50%;border:2px solid var(--bg);font-size:.55rem;font-family:var(--font-head);display:flex;align-items:center;justify-content:center;font-weight:900}
+    #chat-window{
+      position:fixed;bottom:98px;right:30px;width:360px;max-height:520px;
+      background:var(--bg2);border:1px solid var(--border);border-radius:20px;
+      box-shadow:0 0 60px rgba(0,212,255,0.2),0 30px 60px rgba(0,0,0,0.5);
+      z-index:900;display:flex;flex-direction:column;overflow:hidden;
+      transform:scale(.85) translateY(20px);opacity:0;pointer-events:none;
+      transition:all .35s cubic-bezier(.34,1.56,.64,1);transform-origin:bottom right;
+    }
+    #chat-window.open{transform:scale(1) translateY(0);opacity:1;pointer-events:all}
+    .chat-header{padding:1rem 1.2rem;background:linear-gradient(135deg,var(--accent3),var(--accent2));display:flex;align-items:center;gap:.8rem;position:relative;flex-shrink:0}
+    .chat-header-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+    .chat-header-info strong{display:block;font-family:var(--font-head);font-size:.72rem;letter-spacing:1px;color:#fff}
+    .chat-header-info span{font-size:.65rem;color:rgba(255,255,255,0.7)}
+    .chat-close{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.15);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:background .2s}
+    .chat-close:hover{background:rgba(255,255,255,0.3)}
+    .chat-messages{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.7rem;min-height:200px;max-height:320px}
+    .chat-messages::-webkit-scrollbar{width:4px}
+    .chat-messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+    .chat-msg{display:flex;gap:.6rem;align-items:flex-end;max-width:90%}
+    .chat-msg.user{flex-direction:row-reverse;align-self:flex-end}
+    .chat-msg .msg-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent3),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0}
+    .chat-msg.user .msg-avatar{background:linear-gradient(135deg,var(--accent2),var(--accent))}
+    .msg-bubble{padding:.6rem .9rem;border-radius:14px;font-size:.82rem;line-height:1.5;max-width:240px}
+    .chat-msg.bot .msg-bubble{background:var(--card-bg);border:1px solid var(--border);border-bottom-left-radius:4px;color:var(--text)}
+    .chat-msg.user .msg-bubble{background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;border-bottom-right-radius:4px}
+    .chat-typing{display:flex;align-items:center;gap:.3rem;padding:.5rem .8rem;background:var(--card-bg);border:1px solid var(--border);border-radius:14px;border-bottom-left-radius:4px;width:fit-content}
+    .chat-typing span{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:typingDot .9s ease-in-out infinite}
+    .chat-typing span:nth-child(2){animation-delay:.2s}
+    .chat-typing span:nth-child(3){animation-delay:.4s}
+    @keyframes typingDot{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+    .chat-quick-btns{display:flex;flex-wrap:wrap;gap:.4rem;padding:.4rem 1rem .2rem}
+    .chat-quick-btn{padding:4px 10px;border:1px solid var(--border);border-radius:50px;font-size:.62rem;font-family:var(--font-head);letter-spacing:1px;color:var(--accent);background:rgba(0,212,255,0.05);cursor:pointer;transition:border-color .3s,background .3s;white-space:nowrap}
+    .chat-quick-btn:hover{border-color:var(--accent);background:rgba(0,212,255,0.12)}
+    .chat-input-area{display:flex;gap:.5rem;padding:.8rem 1rem;border-top:1px solid var(--border);flex-shrink:0}
+    .chat-input-area input{flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:9px 12px;color:var(--text);font-family:var(--font-body);font-size:.82rem;outline:none;transition:border-color .3s}
+    body.light-mode .chat-input-area input{background:rgba(0,0,0,0.04)}
+    .chat-input-area input:focus{border-color:var(--accent)}
+    .chat-send-btn{width:36px;height:36px;background:linear-gradient(135deg,var(--accent2),var(--accent));border:none;border-radius:10px;color:#fff;font-size:.9rem;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:opacity .2s,transform .2s}
+    .chat-send-btn:hover{opacity:.85;transform:scale(1.08)}
+    @media(max-width:480px){#chat-window{width:calc(100vw - 40px);right:20px}}
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;overflow-x:hidden}
+    body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(1px 1px at 10% 20%,rgba(0,212,255,0.6) 0%,transparent 100%),radial-gradient(1px 1px at 30% 60%,rgba(0,102,255,0.5) 0%,transparent 100%),radial-gradient(1px 1px at 55% 15%,rgba(255,255,255,0.4) 0%,transparent 100%),radial-gradient(1px 1px at 80% 45%,rgba(0,212,255,0.5) 0%,transparent 100%),radial-gradient(1px 1px at 65% 80%,rgba(123,47,255,0.5) 0%,transparent 100%),radial-gradient(1.5px 1.5px at 90% 10%,rgba(255,255,255,0.5) 0%,transparent 100%),radial-gradient(1px 1px at 20% 90%,rgba(0,102,255,0.4) 0%,transparent 100%),radial-gradient(1px 1px at 45% 50%,rgba(0,212,255,0.3) 0%,transparent 100%);pointer-events:none;z-index:0}
+    a{text-decoration:none;color:inherit}ul{list-style:none}img{max-width:100%;display:block}
+    section{position:relative;z-index:1}
+    ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--accent2);border-radius:10px}
+
+    /* ── ANNOUNCEMENT BANNER ─────────────────────── */
+    #announce-bar{
+      position:fixed;top:0;left:0;right:0;z-index:1100;
+      background:linear-gradient(90deg,var(--accent3),var(--accent2),var(--accent));
+      padding:8px 5%;display:flex;align-items:center;justify-content:center;gap:1rem;
+      font-family:var(--font-head);font-size:0.68rem;letter-spacing:2px;
+      animation:slideDown .5s ease;
+    }
+    @keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+    #announce-bar a{color:#fff;text-decoration:underline;opacity:.9}
+    #announce-bar .close-bar{position:absolute;right:20px;cursor:pointer;font-size:1.1rem;opacity:.8;background:none;border:none;color:#fff}
+
+    /* ── NAVBAR ──────────────────────────────────── */
+    #navbar{
+      position:fixed;top:36px;left:0;right:0;z-index:1000;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0 5%;height:70px;
+      background:rgba(2,12,24,0.85);backdrop-filter:blur(14px);
+      border-bottom:1px solid var(--border);transition:box-shadow 0.3s,top 0.3s;
+    }
+    #navbar.scrolled{box-shadow:0 4px 30px rgba(0,212,255,0.12)}
+    #navbar.bar-hidden{top:0}
+    .nav-logo{font-family:var(--font-head);font-weight:900;font-size:1.1rem;letter-spacing:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .nav-logo span{display:block;font-size:0.55rem;letter-spacing:4px;opacity:.7;-webkit-text-fill-color:var(--text-mute)}
+    .nav-links{display:flex;gap:1.4rem;align-items:center}
+    .nav-links a{font-family:var(--font-head);font-size:0.62rem;letter-spacing:2px;color:var(--text-mute);text-transform:uppercase;position:relative;transition:color .3s}
+    .nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--accent);box-shadow:var(--glow);transition:width .3s}
+    .nav-links a:hover{color:var(--accent)}.nav-links a:hover::after{width:100%}
+    .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+    .hamburger span{display:block;width:24px;height:2px;background:var(--accent);border-radius:2px;transition:transform .3s,opacity .3s}
+
+    /* ── BUTTONS ──────────────────────────────────── */
+    .btn-primary{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;font-family:var(--font-head);font-size:0.72rem;letter-spacing:2px;text-transform:uppercase;border:none;border-radius:var(--radius);cursor:pointer;box-shadow:var(--glow2);transition:transform .2s,box-shadow .3s}
+    .btn-primary:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 0 40px rgba(0,102,255,0.6)}
+    .btn-outline{display:inline-flex;align-items:center;gap:8px;padding:13px 30px;background:transparent;color:var(--accent);font-family:var(--font-head);font-size:0.72rem;letter-spacing:2px;text-transform:uppercase;border:1px solid var(--accent);border-radius:var(--radius);cursor:pointer;transition:background .3s,transform .2s,box-shadow .3s}
+    .btn-outline:hover{background:rgba(0,212,255,0.1);transform:translateY(-3px);box-shadow:var(--glow)}
+
+    /* ── SECTION COMMON ──────────────────────────── */
+    .section-inner{max-width:1200px;margin:0 auto;padding:100px 5%}
+    .section-tag{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-head);font-size:0.65rem;letter-spacing:4px;color:var(--accent);text-transform:uppercase;margin-bottom:1rem}
+    .section-tag::before{content:'';width:24px;height:1px;background:var(--accent);box-shadow:var(--glow)}
+    .section-title{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,3rem);font-weight:800;line-height:1.2;margin-bottom:1rem}
+    .section-title span{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .section-desc{color:var(--text-mute);max-width:580px;line-height:1.8;margin-bottom:3rem}
+    .reveal{opacity:0;transform:translateY(40px);transition:opacity .7s ease,transform .7s ease}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+
+    /* ── HERO ────────────────────────────────────── */
+    #home{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:160px 5% 80px;position:relative;overflow:hidden}
+    #home::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;background:radial-gradient(circle,rgba(0,102,255,0.13) 0%,rgba(0,212,255,0.06) 40%,transparent 70%);border-radius:50%;pointer-events:none;animation:pulseOrb 4s ease-in-out infinite}
+    @keyframes pulseOrb{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:1}50%{transform:translate(-50%,-50%) scale(1.12);opacity:.7}}
+    .scan-line{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);animation:scan 6s linear infinite;opacity:.4}
+    @keyframes scan{0%{top:0}100%{top:100%}}
+    .hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border:1px solid var(--border);border-radius:50px;font-size:.7rem;letter-spacing:3px;color:var(--accent);font-family:var(--font-head);text-transform:uppercase;margin-bottom:2rem;background:rgba(0,212,255,0.05);animation:fadeUp .8s ease both}
+    .hero-badge::before{content:'';width:6px;height:6px;background:var(--accent);border-radius:50%;box-shadow:var(--glow);animation:blink 1.5s ease infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+    .hero-title{font-family:var(--font-head);font-size:clamp(2.2rem,6vw,5rem);font-weight:900;line-height:1.1;letter-spacing:2px;margin-bottom:1.5rem;animation:fadeUp .8s .2s ease both}
+    .hero-title .line1{display:block;color:var(--text)}
+    .hero-title .line2{display:block;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200%;animation:gradShift 3s linear infinite,fadeUp .8s .2s ease both}
+    @keyframes gradShift{0%{background-position:0%}100%{background-position:200%}}
+    .hero-sub{max-width:560px;color:var(--text-mute);font-size:1.05rem;line-height:1.7;margin:0 auto 2.5rem;animation:fadeUp .8s .4s ease both}
+    #typing-text{font-family:var(--font-head);font-size:.85rem;letter-spacing:2px;color:var(--accent);min-height:1.4em;margin-bottom:2.5rem;animation:fadeUp .8s .5s ease both}
+    #typing-text::after{content:'|';animation:blink .7s step-end infinite}
+    .hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation:fadeUp .8s .6s ease both}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ── STATS ───────────────────────────────────── */
+    #stats{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+    .stat-item{padding:50px 30px;text-align:center;border-right:1px solid var(--border);position:relative;overflow:hidden;transition:background .3s}
+    .stat-item:last-child{border-right:none}
+    .stat-item::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center bottom,rgba(0,212,255,0.06) 0%,transparent 70%);opacity:0;transition:opacity .4s}
+    .stat-item:hover::before{opacity:1}
+    .stat-icon{font-size:2rem;margin-bottom:.8rem;display:block}
+    .stat-number{font-family:var(--font-head);font-size:clamp(2rem,4vw,3.2rem);font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:.4rem;display:block}
+    .stat-label{font-size:.78rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-mute);font-family:var(--font-head)}
+
+    /* ── ABOUT ───────────────────────────────────── */
+    #about{background:var(--bg)}
+    .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+    .about-visual{position:relative}
+    .about-card-main{background:var(--card-bg);border:1px solid var(--border);border-radius:20px;padding:2.5rem;backdrop-filter:blur(10px);box-shadow:0 20px 60px rgba(0,0,0,0.5);position:relative;overflow:hidden}
+    .about-card-main::before{content:'';position:absolute;top:-1px;left:20px;right:20px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+    .about-card-main h3{font-family:var(--font-head);font-size:.7rem;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:1.5rem}
+    .about-feature{display:flex;align-items:flex-start;gap:1rem;margin-bottom:1.2rem;padding:1rem;border:1px solid var(--border);border-radius:10px;background:rgba(0,212,255,0.03);transition:border-color .3s,background .3s}
+    .about-feature:hover{border-color:var(--accent);background:rgba(0,212,255,0.07)}
+    .about-feature-icon{width:40px;height:40px;background:linear-gradient(135deg,rgba(0,102,255,0.3),rgba(0,212,255,0.2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+    .about-feature-text h4{font-family:var(--font-head);font-size:.75rem;letter-spacing:1px;margin-bottom:.2rem}
+    .about-feature-text p{font-size:.82rem;color:var(--text-mute);line-height:1.5}
+    .floating-badge{position:absolute;bottom:-20px;right:-20px;background:linear-gradient(135deg,var(--accent3),var(--accent2));border-radius:50%;width:90px;height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 30px rgba(123,47,255,0.5);font-family:var(--font-head);animation:floatBadge 3s ease-in-out infinite}
+    @keyframes floatBadge{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    .floating-badge strong{font-size:1.4rem;font-weight:900;line-height:1}
+    .floating-badge span{font-size:.5rem;letter-spacing:1px;opacity:.8;text-align:center}
+    .about-content p{color:var(--text-mute);line-height:1.9;margin-bottom:1.2rem}
+    .about-content p strong{color:var(--text)}
+
+    /* ── GALLERY ─────────────────────────────────── */
+    #gallery{background:var(--bg2)}
+    .gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+    .gallery-item{position:relative;border-radius:var(--radius);overflow:hidden;cursor:pointer;border:1px solid var(--border);aspect-ratio:16/10;background:var(--bg3)}
+    .gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease,filter .4s}
+    .gallery-item:hover img{transform:scale(1.08);filter:brightness(0.6)}
+    .gallery-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(2,12,24,0.9) 0%,transparent 60%);opacity:0;transition:opacity .4s;display:flex;align-items:flex-end;padding:1.2rem}
+    .gallery-item:hover .gallery-overlay{opacity:1}
+    .gallery-overlay span{font-family:var(--font-head);font-size:.7rem;letter-spacing:2px;color:var(--accent);text-transform:uppercase}
+    /* Lightbox */
+    #lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:4000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(6px)}
+    #lightbox.open{opacity:1;pointer-events:all}
+    #lightbox img{max-width:90vw;max-height:85vh;border-radius:12px;border:1px solid var(--border);box-shadow:0 0 60px rgba(0,212,255,0.2)}
+    #lightbox-close{position:absolute;top:20px;right:24px;font-size:2rem;color:var(--text-mute);cursor:pointer;background:none;border:none;transition:color .2s}
+    #lightbox-close:hover{color:var(--accent)}
+
+    /* ── FACULTY ─────────────────────────────────── */
+    #faculty{background:var(--bg)}
+    .faculty-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem}
+    .faculty-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:1.8rem;text-align:center;position:relative;overflow:hidden;transition:transform .35s,box-shadow .35s,border-color .35s;cursor:default}
+    .faculty-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent2),var(--accent))}
+    .faculty-card:hover{transform:translateY(-6px);border-color:rgba(0,212,255,0.4);box-shadow:0 20px 50px rgba(0,0,0,0.5),0 0 30px rgba(0,212,255,0.08)}
+    .faculty-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent3));display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:1.3rem;font-weight:900;margin:0 auto 1rem;border:2px solid rgba(0,212,255,0.3)}
+    .faculty-card h4{font-family:var(--font-head);font-size:.8rem;letter-spacing:1px;margin-bottom:.3rem}
+    .faculty-role{font-size:.72rem;color:var(--accent);font-family:var(--font-head);letter-spacing:2px;text-transform:uppercase;margin-bottom:.8rem}
+    .faculty-bio{font-size:.78rem;color:var(--text-mute);line-height:1.6;margin-bottom:1rem}
+    .faculty-tags{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center}
+    .faculty-tag{padding:2px 8px;border-radius:20px;font-size:.6rem;font-family:var(--font-head);letter-spacing:1px;border:1px solid rgba(0,212,255,0.25);color:var(--accent);background:rgba(0,212,255,0.05)}
+
+    /* ── COURSES ─────────────────────────────────── */
+    #courses{background:var(--bg2)}
+    .courses-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+    .course-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;position:relative;overflow:hidden;cursor:pointer;transition:transform .35s,box-shadow .35s,border-color .35s}
+    .course-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--card-color,linear-gradient(90deg,var(--accent),var(--accent2)))}
+    .course-card::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top left,rgba(0,212,255,0.06) 0%,transparent 60%);opacity:0;transition:opacity .4s}
+    .course-card:hover{transform:translateY(-8px);border-color:rgba(0,212,255,0.4);box-shadow:0 20px 50px rgba(0,0,0,0.5),0 0 30px rgba(0,212,255,0.1)}
+    .course-card:hover::after{opacity:1}
+    .course-emoji{font-size:2.5rem;margin-bottom:1rem;display:block}
+    .course-tag{display:inline-block;padding:3px 10px;border-radius:50px;font-size:.6rem;letter-spacing:2px;font-family:var(--font-head);text-transform:uppercase;margin-bottom:.8rem;background:rgba(0,212,255,0.1);color:var(--accent);border:1px solid rgba(0,212,255,0.2)}
+    .course-card h3{font-family:var(--font-head);font-size:1rem;font-weight:700;margin-bottom:.7rem;letter-spacing:1px}
+    .course-card p{font-size:.85rem;color:var(--text-mute);line-height:1.7;margin-bottom:1.4rem}
+    .course-meta{display:flex;gap:1rem;font-size:.72rem;color:var(--text-mute);font-family:var(--font-head);letter-spacing:1px;border-top:1px solid var(--border);padding-top:1rem;flex-wrap:wrap}
+    .course-meta span{display:flex;align-items:center;gap:5px}
+    .enroll-btn{display:inline-flex;align-items:center;gap:6px;margin-top:.8rem;padding:8px 16px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.25);border-radius:8px;font-family:var(--font-head);font-size:.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--accent);cursor:pointer;transition:background .3s,border-color .3s}
+    .enroll-btn:hover{background:rgba(0,212,255,0.18);border-color:var(--accent)}
+
+    /* Course Modal */
+    #course-modal{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:4000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(8px)}
+    #course-modal.open{opacity:1;pointer-events:all}
+    .modal-box{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:2.5rem;max-width:520px;width:90%;position:relative;box-shadow:0 0 80px rgba(0,212,255,0.15)}
+    .modal-box::before{content:'';position:absolute;top:-1px;left:30px;right:30px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+    .modal-close{position:absolute;top:16px;right:20px;background:none;border:none;color:var(--text-mute);font-size:1.5rem;cursor:pointer;transition:color .2s}
+    .modal-close:hover{color:var(--accent)}
+    .modal-tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.6rem;font-family:var(--font-head);letter-spacing:2px;text-transform:uppercase;background:rgba(0,212,255,0.1);color:var(--accent);border:1px solid rgba(0,212,255,0.25);margin-bottom:1rem}
+    .modal-box h2{font-family:var(--font-head);font-size:1.2rem;margin-bottom:1rem;letter-spacing:1px}
+    .modal-box p{color:var(--text-mute);line-height:1.8;margin-bottom:1.2rem;font-size:.9rem}
+    .modal-meta{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:1.5rem}
+    .modal-meta-item{padding:.8rem;background:rgba(0,212,255,0.04);border:1px solid var(--border);border-radius:10px}
+    .modal-meta-item label{display:block;font-family:var(--font-head);font-size:.58rem;letter-spacing:2px;color:var(--text-mute);text-transform:uppercase;margin-bottom:.2rem}
+    .modal-meta-item span{font-family:var(--font-head);font-size:.8rem;color:var(--accent)}
+
+    /* ── TESTIMONIALS ─────────────────────────────── */
+    #testimonials{background:var(--bg)}
+    .testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+    .testi-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;position:relative;transition:transform .3s,border-color .3s}
+    .testi-card:hover{transform:translateY(-5px);border-color:rgba(0,212,255,0.3)}
+    .testi-card::before{content:'"';position:absolute;top:1rem;right:1.5rem;font-size:4rem;font-family:Georgia,serif;color:rgba(0,212,255,0.12);line-height:1}
+    .testi-text{font-size:.9rem;color:var(--text-mute);line-height:1.8;margin-bottom:1.5rem;font-style:italic}
+    .testi-author{display:flex;align-items:center;gap:.8rem}
+    .testi-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent3));display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:.85rem;font-weight:700;flex-shrink:0}
+    .testi-author-info strong{display:block;font-family:var(--font-head);font-size:.75rem;letter-spacing:1px}
+    .testi-author-info span{font-size:.72rem;color:var(--text-mute)}
+    .testi-stars{color:#ffd700;font-size:.85rem;margin-bottom:1rem;letter-spacing:2px}
+
+    /* ── AWARDS ───────────────────────────────────── */
+    #awards{background:var(--bg2)}
+    .awards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+    .award-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:1.8rem;display:flex;gap:1rem;align-items:flex-start;transition:transform .3s,border-color .3s}
+    .award-card:hover{transform:translateY(-4px);border-color:rgba(0,212,255,0.35)}
+    .award-icon{font-size:2rem;flex-shrink:0;filter:drop-shadow(0 0 8px rgba(255,215,0,0.4))}
+    .award-year{font-family:var(--font-head);font-size:.6rem;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:.3rem}
+    .award-title{font-family:var(--font-head);font-size:.82rem;letter-spacing:1px;margin-bottom:.5rem}
+    .award-desc{font-size:.78rem;color:var(--text-mute);line-height:1.6}
+
+    /* ── EVENTS ───────────────────────────────────── */
+    #events{background:var(--bg)}
+    .events-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+    .event-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:transform .35s,box-shadow .35s,border-color .35s}
+    .event-card:hover{transform:translateY(-6px);border-color:rgba(0,212,255,0.4);box-shadow:0 20px 50px rgba(0,0,0,0.4)}
+    .event-img{height:160px;background:linear-gradient(135deg,var(--bg3),var(--bg2));display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative;overflow:hidden}
+    .event-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 60%,var(--card-bg))}
+    .event-body{padding:1.4rem}
+    .event-date{font-family:var(--font-head);font-size:.62rem;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:.5rem}
+    .event-body h4{font-family:var(--font-head);font-size:.88rem;letter-spacing:1px;margin-bottom:.5rem}
+    .event-body p{font-size:.8rem;color:var(--text-mute);line-height:1.6}
+
+    /* ── FAQ ─────────────────────────────────────── */
+    #faq{background:var(--bg2)}
+    .faq-list{max-width:760px;margin:0 auto}
+    .faq-item{border:1px solid var(--border);border-radius:12px;margin-bottom:1rem;overflow:hidden;transition:border-color .3s}
+    .faq-item.open{border-color:rgba(0,212,255,0.4)}
+    .faq-q{display:flex;justify-content:space-between;align-items:center;padding:1.2rem 1.5rem;cursor:pointer;gap:1rem;transition:background .3s}
+    .faq-q:hover{background:rgba(0,212,255,0.04)}
+    .faq-q h4{font-family:var(--font-head);font-size:.8rem;letter-spacing:1px;flex:1}
+    .faq-icon{font-size:1.2rem;color:var(--accent);transition:transform .3s;flex-shrink:0}
+    .faq-item.open .faq-icon{transform:rotate(45deg)}
+    .faq-a{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s}
+    .faq-item.open .faq-a{max-height:300px;padding:0 1.5rem 1.2rem}
+    .faq-a p{font-size:.85rem;color:var(--text-mute);line-height:1.8}
+
+    /* ── CONTACT ──────────────────────────────────── */
+    #contact{background:var(--bg)}
+    .contact-grid{display:grid;grid-template-columns:1fr 1.6fr;gap:4rem;align-items:start}
+    .contact-info h3{font-family:var(--font-head);font-size:1rem;letter-spacing:2px;margin-bottom:2rem;color:var(--accent)}
+    .contact-detail{display:flex;align-items:flex-start;gap:1rem;margin-bottom:1.5rem}
+    .contact-detail-icon{width:44px;height:44px;background:rgba(0,212,255,0.08);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;transition:background .3s,border-color .3s}
+    .contact-detail:hover .contact-detail-icon{background:rgba(0,212,255,0.18);border-color:var(--accent)}
+    .contact-detail-text h4{font-family:var(--font-head);font-size:.68rem;letter-spacing:2px;color:var(--text-mute);text-transform:uppercase;margin-bottom:.25rem}
+    .contact-detail-text p{font-size:.9rem;color:var(--text)}
+    .map-embed{margin-top:1.5rem;border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+    .map-embed iframe{width:100%;height:200px;display:block;filter:invert(90%) hue-rotate(180deg) saturate(1.5)}
+    .contact-form-card{background:var(--card-bg);border:1px solid var(--border);border-radius:20px;padding:2.5rem;backdrop-filter:blur(10px);position:relative;overflow:hidden}
+    .contact-form-card::before{content:'';position:absolute;top:-1px;left:30px;right:30px;height:2px;background:linear-gradient(90deg,transparent,var(--accent2),var(--accent),transparent)}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+    .form-group{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem}
+    .form-group label{font-family:var(--font-head);font-size:.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-mute)}
+    .form-group input,.form-group textarea,.form-group select{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--text);font-family:var(--font-body);font-size:.92rem;outline:none;transition:border-color .3s,box-shadow .3s,background .3s}
+    .form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,212,255,0.1);background:rgba(0,212,255,0.04)}
+    .form-group input::placeholder,.form-group textarea::placeholder{color:rgba(106,144,176,0.5)}
+    .form-group textarea{resize:vertical;min-height:130px}
+    .form-error{font-size:.72rem;color:#ff4d6d;display:none;font-family:var(--font-head);letter-spacing:1px}
+    .form-group.error input,.form-group.error textarea,.form-group.error select{border-color:#ff4d6d;box-shadow:0 0 0 3px rgba(255,77,109,0.1)}
+    .form-group.error .form-error{display:block}
+    .btn-submit{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;font-family:var(--font-head);font-size:.75rem;letter-spacing:3px;text-transform:uppercase;border:none;border-radius:12px;cursor:pointer;box-shadow:var(--glow2);transition:transform .2s,box-shadow .3s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:.5rem}
+    .btn-submit:hover{transform:translateY(-2px);box-shadow:0 0 50px rgba(0,102,255,0.7)}
+    .btn-submit:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+    /* ── FOOTER ───────────────────────────────────── */
+    footer{background:var(--bg2);border-top:1px solid var(--border);padding:60px 5% 30px;position:relative;z-index:1}
+    .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1.5fr;gap:3rem;max-width:1200px;margin:0 auto 3rem}
+    .footer-brand .footer-logo{font-family:var(--font-head);font-size:1.2rem;font-weight:900;letter-spacing:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.6rem}
+    .footer-brand p{color:var(--text-mute);font-size:.82rem;line-height:1.8;max-width:280px;margin-bottom:1.2rem}
+    .social-links{display:flex;gap:.8rem}
+    .social-link{width:38px;height:38px;border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.9rem;color:var(--text-mute);transition:border-color .3s,color .3s,background .3s;cursor:pointer;background:transparent}
+    .social-link:hover{border-color:var(--accent);color:var(--accent);background:rgba(0,212,255,0.08)}
+    .footer-col h5{font-family:var(--font-head);font-size:.68rem;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:1.2rem}
+    .footer-col ul{display:flex;flex-direction:column;gap:.7rem}
+    .footer-col ul a{font-size:.82rem;color:var(--text-mute);transition:color .3s}
+    .footer-col ul a:hover{color:var(--accent)}
+    .newsletter-input{display:flex;gap:.5rem;margin-top:.5rem}
+    .newsletter-input input{flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-family:var(--font-body);font-size:.85rem;outline:none;transition:border-color .3s}
+    .newsletter-input input:focus{border-color:var(--accent)}
+    .newsletter-input button{padding:10px 16px;background:linear-gradient(135deg,var(--accent2),var(--accent));border:none;border-radius:8px;color:#fff;font-family:var(--font-head);font-size:.62rem;letter-spacing:2px;cursor:pointer;transition:opacity .3s}
+    .newsletter-input button:hover{opacity:.85}
+    .footer-bottom{max-width:1200px;margin:0 auto;padding-top:2rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+    .footer-bottom p{color:var(--text-mute);font-size:.78rem}
+    .footer-bottom .footer-links{display:flex;gap:1.5rem}
+    .footer-bottom .footer-links a{font-family:var(--font-head);font-size:.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-mute);transition:color .3s}
+    .footer-bottom .footer-links a:hover{color:var(--accent)}
+
+    /* ── TOAST ────────────────────────────────────── */
+    #toast{position:fixed;bottom:30px;right:30px;background:var(--bg3);border:1px solid var(--accent);border-radius:14px;padding:16px 24px;display:flex;align-items:center;gap:12px;box-shadow:var(--glow);z-index:5000;transform:translateY(80px);opacity:0;transition:transform .4s,opacity .4s;pointer-events:none}
+    #toast.show{transform:translateY(0);opacity:1}
+    #toast.error-toast{border-color:#ff4d6d;box-shadow:0 0 18px rgba(255,77,109,0.4)}
+    #toast .toast-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent2),var(--accent));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+    #toast.error-toast .toast-icon{background:linear-gradient(135deg,#ff2d55,#ff4d6d)}
+    #toast .toast-text strong{display:block;font-family:var(--font-head);font-size:.78rem;letter-spacing:1px;margin-bottom:2px}
+    #toast .toast-text span{font-size:.78rem;color:var(--text-mute)}
+
+    /* ── WELCOME PANEL ────────────────────────────── */
+    #overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:2999;opacity:0;pointer-events:none;transition:opacity .3s}
+    #overlay.active{opacity:1;pointer-events:all}
+    #welcome-panel{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.85);background:var(--bg2);border:1px solid var(--accent);border-radius:20px;padding:3rem;text-align:center;z-index:3000;opacity:0;pointer-events:none;transition:all .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 0 80px rgba(0,212,255,0.25),0 40px 80px rgba(0,0,0,0.6);max-width:480px;width:90%}
+    #welcome-panel.active{opacity:1;pointer-events:all;transform:translate(-50%,-50%) scale(1)}
+    #welcome-panel h2{font-family:var(--font-head);font-size:1.4rem;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:1rem;letter-spacing:2px}
+    #welcome-panel p{color:var(--text-mute);line-height:1.8;margin-bottom:1.5rem}
+
+    /* ── BACK TO TOP ──────────────────────────────── */
+    #back-top{position:fixed;bottom:30px;left:30px;width:44px;height:44px;background:linear-gradient(135deg,var(--accent2),var(--accent));border:none;border-radius:10px;color:#fff;font-size:1.2rem;cursor:pointer;z-index:900;opacity:0;transform:translateY(10px);transition:opacity .3s,transform .3s,box-shadow .3s;box-shadow:var(--glow2)}
+    #back-top.visible{opacity:1;transform:translateY(0)}
+    #back-top:hover{box-shadow:0 0 30px rgba(0,102,255,0.7)}
+
+    /* ── RESPONSIVE ───────────────────────────────── */
+    @media(max-width:1100px){.faculty-grid{grid-template-columns:repeat(2,1fr)}.footer-grid{grid-template-columns:1fr 1fr;gap:2rem}}
+    @media(max-width:900px){.stats-grid{grid-template-columns:repeat(2,1fr)}.stat-item:nth-child(2){border-right:none}.stat-item:nth-child(3){border-top:1px solid var(--border)}.stat-item:nth-child(4){border-top:1px solid var(--border)}.about-grid,.contact-grid{grid-template-columns:1fr;gap:2.5rem}.courses-grid,.testi-grid,.awards-grid,.events-grid,.gallery-grid{grid-template-columns:repeat(2,1fr)}.about-visual{order:-1}}
+    @media(max-width:640px){.nav-links{display:none;position:absolute;top:70px;left:0;right:0;background:rgba(2,12,24,0.97);backdrop-filter:blur(20px);flex-direction:column;padding:2rem;gap:1.5rem;border-bottom:1px solid var(--border)}.nav-links.open{display:flex}.hamburger{display:flex}.courses-grid,.testi-grid,.awards-grid,.events-grid,.gallery-grid,.faculty-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(2,1fr)}.form-row{grid-template-columns:1fr}.hero-btns{flex-direction:column;align-items:center}.footer-grid{grid-template-columns:1fr}.footer-bottom{flex-direction:column;text-align:center}}
+  </style>
+</head>
+<body>
+
+<!-- THEME TOGGLE -->
+<button id="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">☀️</button>
+
+<!-- CHATBOT FAB -->
+<button id="chat-fab" onclick="toggleChat()">
+  🤖
+  <span class="fab-badge">AI</span>
+</button>
+
+<!-- CHAT WINDOW -->
+<div id="chat-window">
+  <div class="chat-header">
+    <div class="chat-header-avatar">🎓</div>
+    <div class="chat-header-info">
+      <strong>LPU ASSISTANT</strong>
+      <span>🟢 Online · AI Powered</span>
+    </div>
+    <button class="chat-close" onclick="toggleChat()">×</button>
+  </div>
+  <div class="chat-messages" id="chatMessages"></div>
+  <div class="chat-quick-btns">
+    <button class="chat-quick-btn" onclick="sendQuick('Admission process')">Admissions</button>
+    <button class="chat-quick-btn" onclick="sendQuick('Fee structure')">Fees</button>
+    <button class="chat-quick-btn" onclick="sendQuick('Hostel facilities')">Hostel</button>
+    <button class="chat-quick-btn" onclick="sendQuick('Placement stats')">Placements</button>
+    <button class="chat-quick-btn" onclick="sendQuick('Scholarships available')">Scholarships</button>
+    <button class="chat-quick-btn" onclick="sendQuick('Campus life')">Campus Life</button>
+  </div>
+  <div class="chat-input-area">
+    <input type="text" id="chatInput" placeholder="Ask anything about LPU…" onkeydown="if(event.key==='Enter')sendChat()"/>
+    <button class="chat-send-btn" onclick="sendChat()">➤</button>
+  </div>
+</div>
+
+<!-- FEE CALCULATOR FLOATING DROPDOWN -->
+<div id="fee-calc-dropdown">
+  <button id="fee-calc-tab" onclick="toggleFeeCalc()" aria-expanded="false">
+    <span class="tab-icon">🧮</span>
+    <span class="tab-label">Fee Calculator</span>
+    <span class="tab-arrow">▲</span>
+  </button>
+  <div id="fee-calc-panel">
+    <div class="fcp-inner">
+      <div class="fcp-left">
+        <div class="fcp-heading">◈ Configure Your Program</div>
+        <div class="calc-field">
+          <label>School / Faculty</label>
+          <select id="calc-school" onchange="calcFees()">
+            <option value="cse">Computer Science &amp; Engineering</option>
+            <option value="mba">School of Business</option>
+            <option value="design">School of Design</option>
+            <option value="law">School of Law</option>
+            <option value="pharmacy">School of Pharmacy</option>
+            <option value="agriculture">School of Agriculture</option>
+          </select>
+        </div>
+        <div class="fcp-row2">
+          <div class="calc-field">
+            <label>Program</label>
+            <select id="calc-program" onchange="calcFees()">
+              <option value="btech">B.Tech (4 yrs)</option>
+              <option value="mtech">M.Tech (2 yrs)</option>
+              <option value="bca">BCA (3 yrs)</option>
+              <option value="mca">MCA (2 yrs)</option>
+              <option value="phd">Ph.D (3 yrs)</option>
+            </select>
+          </div>
+          <div class="calc-field">
+            <label>Specialization</label>
+            <select id="calc-spec" onchange="calcFees()">
+              <option value="cs">Computer Science</option>
+              <option value="aiml">AI &amp; ML</option>
+              <option value="cybersec">Cyber Security</option>
+              <option value="ds">Data Science</option>
+              <option value="iot">IoT Systems</option>
+            </select>
+          </div>
+        </div>
+        <div class="calc-field">
+          <label>Hostel Preference</label>
+          <select id="calc-hostel" onchange="calcFees()">
+            <option value="none">Day Scholar (No Hostel)</option>
+            <option value="shared">3-Sharing — ₹55,000/yr</option>
+            <option value="double">Double Sharing — ₹75,000/yr</option>
+            <option value="single">AC Single — ₹1,10,000/yr</option>
+          </select>
+        </div>
+        <div class="calc-field">
+          <label>Scholarship / JEE Band &nbsp;<span class="range-val" id="scholar-label">None</span></label>
+          <input type="range" id="calc-scholarship" min="0" max="4" step="1" value="0" oninput="updateScholarLabel();calcFees()"/>
+        </div>
+        <div class="calc-field">
+          <label>Add-ons</label>
+          <div class="calc-checkbox-group">
+            <label class="calc-checkbox" id="chk-laptop" onclick="toggleCalcCheck(this);calcFees()"><span class="check-dot"></span>💻 Laptop</label>
+            <label class="calc-checkbox" id="chk-gym" onclick="toggleCalcCheck(this);calcFees()"><span class="check-dot"></span>🏋️ Gym+Pool</label>
+            <label class="calc-checkbox" id="chk-insurance" onclick="toggleCalcCheck(this);calcFees()"><span class="check-dot"></span>🛡️ Insurance</label>
+            <label class="calc-checkbox" id="chk-abroad" onclick="toggleCalcCheck(this);calcFees()"><span class="check-dot"></span>✈️ Abroad</label>
+          </div>
+        </div>
+      </div>
+      <div class="fcp-divider"></div>
+      <div class="fcp-right">
+        <div class="fcp-heading">◈ Annual Fee Breakdown</div>
+        <div class="fee-row"><span class="lbl">📚 Tuition</span><span class="val" id="res-tuition">—</span></div>
+        <div class="fee-row"><span class="lbl">🔬 Lab &amp; Dev</span><span class="val" id="res-lab">—</span></div>
+        <div class="fee-row"><span class="lbl">🏠 Hostel</span><span class="val" id="res-hostel">—</span></div>
+        <div class="fee-row"><span class="lbl">🍽️ Mess</span><span class="val" id="res-mess">—</span></div>
+        <div class="fee-row"><span class="lbl">📦 Add-ons</span><span class="val" id="res-addons">₹0</span></div>
+        <div class="fee-row" style="border-bottom:none"><span class="lbl">🎓 Scholarship</span><span class="val" id="res-discount" style="color:#00c851">—</span></div>
+        <div class="fee-total-row" style="margin-top:.6rem">
+          <span class="lbl">TOTAL / YEAR</span>
+          <span class="val" id="res-total">₹0</span>
+        </div>
+        <div class="scholarship-badge" id="scholarship-info" style="display:none;margin-top:.6rem">
+          <span>🏅</span><span id="scholar-name" style="font-size:.72rem"></span>
+        </div>
+        <div class="fcp-heading" style="margin-top:1rem">◈ EMI Options</div>
+        <div class="emi-breakdown" id="emi-options"></div>
+        <div class="fcp-program-total">
+          <span id="res-duration-label" style="color:var(--text-mute);font-size:.78rem">4-Year Total</span>
+          <span id="res-program-total" style="font-family:var(--font-head);font-size:1.1rem;background:linear-gradient(90deg,var(--accent3),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ANNOUNCEMENT BAR -->
+<div id="announce-bar">
+  <span>🎓 Admissions Open for 2025-26 — Limited Seats Available!</span>
+  <a href="#contact">Apply Now →</a>
+  <button class="close-bar" onclick="closeBar()" title="Close">×</button>
+</div>
+
+<!-- OVERLAY & WELCOME -->
+<div id="overlay" onclick="closeWelcome()"></div>
+<div id="welcome-panel">
+  <div style="font-size:3rem;margin-bottom:1rem">🎓</div>
+  <h2>WELCOME TO LPU</h2>
+  <p>Lovely Professional University — where <strong style="color:var(--text)">tomorrow's innovators</strong> are forged today. Join a legacy of excellence, research, and groundbreaking achievement.</p>
+  <p style="font-family:var(--font-head);font-size:.75rem;letter-spacing:2px;color:var(--accent)">EST. 2005 · PHAGWARA, PUNJAB</p>
+  <button class="btn-primary" onclick="closeWelcome()" style="margin-top:1rem">⚡ EXPLORE NOW</button>
+</div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-logo">LPU<span>Lovely Professional University</span></div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#faculty">Faculty</a></li>
+    <li><a href="#courses">Courses</a></li>
+    <li><a href="#events">Events</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><button class="btn-primary" onclick="openWelcome()" style="padding:10px 18px;font-size:.62rem">✦ JOIN US</button></li>
+  </ul>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- HERO -->
+<section id="home">
+  <div class="scan-line"></div>
+  <div class="hero-badge">✦ Ranked #1 Private University India</div>
+  <h1 class="hero-title">
+    <span class="line1">LOVELY PROFESSIONAL</span>
+    <span class="line2">UNIVERSITY</span>
+  </h1>
+  <div id="typing-text"></div>
+  <p class="hero-sub">Empowering <strong>40,000+ students</strong> across 200+ programs. World-class faculty, cutting-edge research, and industry-integrated education that shapes the leaders of tomorrow.</p>
+  <div class="hero-btns">
+    <a href="#courses" class="btn-primary">🚀 Explore Programs</a>
+    <a href="#about" class="btn-outline">◎ Learn More</a>
+  </div>
+</section>
+
+<!-- STATS -->
+<section id="stats">
+  <div class="stats-grid">
+    <div class="stat-item reveal"><span class="stat-icon">👨‍🎓</span><span class="stat-number" data-target="40000" id="stat-0">0</span><span class="stat-label">Students Enrolled</span></div>
+    <div class="stat-item reveal"><span class="stat-icon">👨‍🏫</span><span class="stat-number" data-target="4000" id="stat-1">0</span><span class="stat-label">Expert Faculty</span></div>
+    <div class="stat-item reveal"><span class="stat-icon">🏆</span><span class="stat-number" data-target="500" id="stat-2">0</span><span class="stat-label">Awards Won</span></div>
+    <div class="stat-item reveal"><span class="stat-icon">🌍</span><span class="stat-number" data-target="200" id="stat-3">0</span><span class="stat-label">Programs Offered</span></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-inner">
+    <div class="about-grid">
+      <div class="about-content reveal">
+        <div class="section-tag">About Us</div>
+        <h2 class="section-title">Shaping <span>Future Leaders</span><br>Since 2005</h2>
+        <p><strong>Lovely Professional University (LPU)</strong> is India's largest private university, situated on a sprawling 600-acre campus in Phagwara, Punjab. Since its inception, LPU has consistently pushed the boundaries of academic excellence and innovation.</p>
+        <p>Our institution blends rigorous academics with real-world industry experience, ensuring every graduate is not just employable — but extraordinary. We house state-of-the-art labs, innovation hubs, sports arenas, and research centers that rival global standards.</p>
+        <p>With a diverse community from <strong>50+ countries</strong>, LPU is truly a global campus that prepares students to thrive in an interconnected world.</p>
+        <a href="#contact" class="btn-primary" style="margin-top:1rem;display:inline-flex">📩 Get In Touch</a>
+      </div>
+      <div class="about-visual reveal">
+        <div class="about-card-main">
+          <h3>◈ University Highlights</h3>
+          <div class="about-feature"><div class="about-feature-icon">🔬</div><div class="about-feature-text"><h4>World-Class Research</h4><p>200+ research labs with funded projects from DRDO, DST, and global corporations.</p></div></div>
+          <div class="about-feature"><div class="about-feature-icon">🌐</div><div class="about-feature-text"><h4>Global Collaborations</h4><p>Partnerships with 300+ international universities across 50+ countries.</p></div></div>
+          <div class="about-feature"><div class="about-feature-icon">💼</div><div class="about-feature-text"><h4>Placement Excellence</h4><p>93%+ placement rate with recruiters like Google, Amazon, Microsoft, and ISRO.</p></div></div>
+          <div class="about-feature"><div class="about-feature-icon">🏅</div><div class="about-feature-text"><h4>NAAC A++ Accredited</h4><p>Consistently ranked among India's top universities by NIRF and QS rankings.</p></div></div>
+        </div>
+        <div class="floating-badge"><strong>20+</strong><span>Years of<br>Excellence</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-tag">Campus Life</div>
+      <h2 class="section-title">Explore Our <span>Campus</span></h2>
+      <p class="section-desc">State-of-the-art facilities designed to inspire learning, innovation and growth across every dimension of student life.</p>
+    </div>
+    <div class="gallery-grid">
+      <div class="gallery-item reveal" onclick="openLightbox(this)">
+        <img src="https://th.bing.com/th/id/R.76778c26db9b2c52b777a4dd5669f881?rik=QqEkHZ2bTdh6mA&riu=http%3a%2f%2fhappenings.lpu.in%2fwp-content%2fuploads%2f2019%2f06%2fBeautiful-campus.jpg&ehk=UHn9jJZODn1MgnoY%2bVF%2f4ku5jqIyHTxzxJP3EzM6YCw%3d&risl=&pid=ImgRaw&r=0" alt="Campus Aerial"/>
+        <div class="gallery-overlay"><span>🏛 Main Campus</span></div>
+      </div>
+      <div class="gallery-item reveal" onclick="openLightbox(this)">
+        <img src="https://www.lpu.in/schools/pharmaceutical-sciences/images/beyondclass/central-instrumentation-lab1.jpg" alt="Science Lab"/>
+        <div class="gallery-overlay"><span>🔬 Science Laboratory</span></div>
+      </div>
+      <div class="gallery-item reveal" onclick="openLightbox(this)">
+        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80" alt="Sports Complex"/>
+        <div class="gallery-overlay"><span>⚽ Sports Complex</span></div>
+      </div>
+      <div class="gallery-item reveal" onclick="openLightbox(this)">
+        <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&q=80" alt="Library"/>
+        <div class="gallery-overlay"><span>📚 Digital Library</span></div>
+      </div>
+      <div class="gallery-item reveal" onclick="openLightbox(this)">
+        <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&q=80" alt="Smart Classroom"/>
+        <div class="gallery-overlay"><span>💻 Smart Classroom</span></div>
+      </div>
+      <div class="gallery-item reveal" onclick="openLightbox(this)">
+        <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80" alt="Annual Day"/>
+        <div class="gallery-overlay"><span>🎭 Annual Day</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div id="lightbox">
+  <button id="lightbox-close" onclick="closeLightbox()">×</button>
+  <img id="lightbox-img" src="" alt="Gallery"/>
+</div>
+
+<!-- FACULTY -->
+<section id="faculty">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-tag">Our Team</div>
+      <h2 class="section-title">Meet Our <span>Distinguished Faculty</span></h2>
+      <p class="section-desc">Our educators bring decades of experience from top institutions, dedicated to shaping the next generation of innovators and leaders.</p>
+    </div>
+    <div class="faculty-grid">
+      <div class="faculty-card reveal">
+        <div class="faculty-avatar">RK</div>
+        <h4>Dr.Raman Chadha</h4>
+        <div class="faculty-role">Vice Chancellor</div>
+        <p class="faculty-bio">Ph.D. Education (IIT Bombay) · 30 years experience · Former UGC Board Member</p>
+        <div class="faculty-tags"><span class="faculty-tag">Leadership</span><span class="faculty-tag">Policy</span><span class="faculty-tag">Research</span></div>
+      </div>
+      <div class="faculty-card reveal">
+        <div class="faculty-avatar" style="background:linear-gradient(135deg,#0066ff,#00d4ff)">SM</div>
+        <h4>Prof. Arshia Gupta</h4>
+        <div class="faculty-role">Head of CS Dept.</div>
+        <p class="faculty-bio">M.Tech CS (IIT Bombay) · 22 years · Google Certified Educator · AI/ML Expert</p>
+        <div class="faculty-tags"><span class="faculty-tag">AI/ML</span><span class="faculty-tag">Coding</span><span class="faculty-tag">STEM</span></div>
+      </div>
+      <div class="faculty-card reveal">
+        <div class="faculty-avatar" style="background:linear-gradient(135deg,#ff6b35,#ff2d55)">AV</div>
+        <h4>Dr. Raghav Aggrawal</h4>
+        <div class="faculty-role">Head of Mathematics</div>
+        <p class="faculty-bio">Ph.D. Mathematics (IIT Kanpur) · 25 years · JEE/Olympiad specialist · 100+ IIT selections</p>
+        <div class="faculty-tags"><span class="faculty-tag">Mathematics</span><span class="faculty-tag">JEE</span><span class="faculty-tag">Olympiad</span></div>
+      </div>
+      <div class="faculty-card reveal">
+        <div class="faculty-avatar" style="background:linear-gradient(135deg,#00c851,#00d4ff)">PS</div>
+        <h4>Ms. Meenu Singh</h4>
+        <div class="faculty-role">Head of Design</div>
+        <p class="faculty-bio">M.Des (NID Ahmedabad) · 18 years · UI/UX Expert · Adobe Certified Instructor</p>
+        <div class="faculty-tags"><span class="faculty-tag">UI/UX</span><span class="faculty-tag">Design</span><span class="faculty-tag">Product</span></div>
+      </div>
+      <div class="faculty-card reveal">
+        <div class="faculty-avatar" style="background:linear-gradient(135deg,#ffd700,#ff6b35)">NK</div>
+        <h4>Dr. Kiran Kapoor</h4>
+        <div class="faculty-role">Head of Management</div>
+        <p class="faculty-bio">Ph.D. Management (IIM-A) · 18 years · Business Strategy & Analytics Expert</p>
+        <div class="faculty-tags"><span class="faculty-tag">MBA</span><span class="faculty-tag">Strategy</span><span class="faculty-tag">Analytics</span></div>
+      </div>
+      <div class="faculty-card reveal">
+        <div class="faculty-avatar" style="background:linear-gradient(135deg,#7b2fff,#0066ff)">RG</div>
+        <h4>Mr. Raj Singh</h4>
+        <div class="faculty-role">Sports Director</div>
+        <p class="faculty-bio">B.P.Ed (LNIPE) · 17 years · Former National Cricketer · NIS Certified Coach</p>
+        <div class="faculty-tags"><span class="faculty-tag">Cricket</span><span class="faculty-tag">Athletics</span><span class="faculty-tag">Fitness</span></div>
+      </div>
+      <div class="faculty-card reveal">
+        <div class="faculty-avatar" style="background:linear-gradient(135deg,#ff2d55,#7b2fff)">MJ</div>
+        <h4>Dr. Saurav Joshi</h4>
+        <div class="faculty-role">Head of Research</div>
+        <p class="faculty-bio">Ph.D. Physics (TIFR Mumbai) · 19 years · 30+ published papers · DRDO consultant</p>
+        <div class="faculty-tags"><span class="faculty-tag">Physics</span><span class="faculty-tag">Research</span><span class="faculty-tag">DRDO</span></div>
+      </div>
+      <div class="faculty-card reveal">
+        <div class="faculty-avatar" style="background:linear-gradient(135deg,#00d4ff,#00c851)">KR</div>
+        <h4>Ms.Neena Mehta</h4>
+        <div class="faculty-role">Student Counselor</div>
+        <p class="faculty-bio">M.A. Psychology (TISS Mumbai) · 12 years · Certified child psychologist · Career guidance</p>
+        <div class="faculty-tags"><span class="faculty-tag">Counseling</span><span class="faculty-tag">Psychology</span><span class="faculty-tag">Careers</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COURSES -->
+<section id="courses">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-tag">Programs</div>
+      <h2 class="section-title">Our <span>Flagship Courses</span></h2>
+      <p class="section-desc">From engineering to management, design to data science — our programs are curated to match the demands of a fast-evolving global market.</p>
+    </div>
+    <div class="courses-grid">
+      <div class="course-card reveal" style="--card-color:linear-gradient(90deg,#0066ff,#00d4ff)" onclick="openCourseModal({title:'B.Tech Computer Science',tag:'Technology',emoji:'💻',desc:'Master algorithms, AI, cloud computing, cybersecurity, and full-stack development through project-based learning with industry mentors. Specializations in AI, Cybersecurity, and Cloud.',duration:'4 Years',degree:'B.Tech',mode:'Semester-based',intake:'500 seats'})">
+        <span class="course-emoji">💻</span>
+        <span class="course-tag">Technology</span>
+        <h3>B.Tech Computer Science</h3>
+        <p>Master algorithms, AI, cloud computing, cybersecurity, and full-stack development through project-based learning with industry mentors.</p>
+        <div class="course-meta"><span>📅 4 Years</span><span>🎓 B.Tech</span><span>📚 Sem-based</span></div>
+        <button class="enroll-btn">📋 View Details</button>
+      </div>
+      <div class="course-card reveal" style="--card-color:linear-gradient(90deg,#7b2fff,#0066ff)" onclick="openCourseModal({title:'MBA Business Analytics',tag:'Management',emoji:'📊',desc:'Blend business strategy with data analytics, machine learning, and decision science. Industry-integrated curriculum with live projects and Fortune 500 internships.',duration:'2 Years',degree:'MBA',mode:'Semester-based',intake:'300 seats'})">
+        <span class="course-emoji">📊</span>
+        <span class="course-tag">Management</span>
+        <h3>MBA Business Analytics</h3>
+        <p>Blend business strategy with data analytics, machine learning, and decision science. Prepare for leadership roles in Fortune 500 companies.</p>
+        <div class="course-meta"><span>📅 2 Years</span><span>🎓 MBA</span><span>📚 Sem-based</span></div>
+        <button class="enroll-btn">📋 View Details</button>
+      </div>
+      <div class="course-card reveal" style="--card-color:linear-gradient(90deg,#00d4ff,#7b2fff)" onclick="openCourseModal({title:'B.Sc. Data Science & AI',tag:'Sciences',emoji:'🧬',desc:'Dive deep into Python, machine learning, neural networks, NLP, and big data. Build real AI products from semester one. Industry partnerships with top tech firms.',duration:'3 Years',degree:'B.Sc',mode:'Semester-based',intake:'250 seats'})">
+        <span class="course-emoji">🧬</span>
+        <span class="course-tag">Sciences</span>
+        <h3>B.Sc. Data Science & AI</h3>
+        <p>Dive deep into Python, machine learning, neural networks, NLP, and big data. Build real AI products from semester one onwards.</p>
+        <div class="course-meta"><span>📅 3 Years</span><span>🎓 B.Sc</span><span>📚 Sem-based</span></div>
+        <button class="enroll-btn">📋 View Details</button>
+      </div>
+      <div class="course-card reveal" style="--card-color:linear-gradient(90deg,#ff6b35,#ff2d55)" onclick="openCourseModal({title:'B.Des Interaction Design',tag:'Design',emoji:'🎨',desc:'Learn UI/UX design, design thinking, motion graphics, and product design with industry-standard tools and live client projects. Adobe & Figma certified curriculum.',duration:'4 Years',degree:'B.Des',mode:'Semester-based',intake:'150 seats'})">
+        <span class="course-emoji">🎨</span>
+        <span class="course-tag">Design</span>
+        <h3>B.Des Interaction Design</h3>
+        <p>Learn UI/UX design, design thinking, motion graphics, and product design with industry-standard tools and live client projects.</p>
+        <div class="course-meta"><span>📅 4 Years</span><span>🎓 B.Des</span><span>📚 Sem-based</span></div>
+        <button class="enroll-btn">📋 View Details</button>
+      </div>
+      <div class="course-card reveal" style="--card-color:linear-gradient(90deg,#00c851,#00d4ff)" onclick="openCourseModal({title:'B.Tech Mechanical Engg.',tag:'Engineering',emoji:'⚙️',desc:'Explore thermodynamics, robotics, CAD/CAM, manufacturing processes, and EV technology with state-of-the-art workshop facilities. Focus on sustainable manufacturing.',duration:'4 Years',degree:'B.Tech',mode:'Semester-based',intake:'400 seats'})">
+        <span class="course-emoji">⚙️</span>
+        <span class="course-tag">Engineering</span>
+        <h3>B.Tech Mechanical Engg.</h3>
+        <p>Explore thermodynamics, robotics, CAD/CAM, manufacturing processes, and EV technology with state-of-the-art workshop facilities.</p>
+        <div class="course-meta"><span>📅 4 Years</span><span>🎓 B.Tech</span><span>📚 Sem-based</span></div>
+        <button class="enroll-btn">📋 View Details</button>
+      </div>
+      <div class="course-card reveal" style="--card-color:linear-gradient(90deg,#ffd700,#ff6b35)" onclick="openCourseModal({title:'B.Tech ECE (IoT & Embedded)',tag:'Electronics',emoji:'📡',desc:'Build smart devices, embedded systems, IoT networks, VLSI circuits, and communication systems in our fully equipped electronics labs. Industry tie-ups with Texas Instruments.',duration:'4 Years',degree:'B.Tech',mode:'Semester-based',intake:'350 seats'})">
+        <span class="course-emoji">📡</span>
+        <span class="course-tag">Electronics</span>
+        <h3>B.Tech ECE (IoT & Embedded)</h3>
+        <p>Build smart devices, embedded systems, IoT networks, VLSI circuits, and communication systems in our fully equipped electronics labs.</p>
+        <div class="course-meta"><span>📅 4 Years</span><span>🎓 B.Tech</span><span>📚 Sem-based</span></div>
+        <button class="enroll-btn">📋 View Details</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Course Modal -->
+<div id="course-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeCourseModal()">×</button>
+    <div id="modal-emoji" style="font-size:2.5rem;margin-bottom:.8rem">💻</div>
+    <div id="modal-tag" class="modal-tag">Technology</div>
+    <h2 id="modal-title">Course Title</h2>
+    <p id="modal-desc">Course description here.</p>
+    <div class="modal-meta">
+      <div class="modal-meta-item"><label>Duration</label><span id="modal-duration">4 Years</span></div>
+      <div class="modal-meta-item"><label>Degree</label><span id="modal-degree">B.Tech</span></div>
+      <div class="modal-meta-item"><label>Mode</label><span id="modal-mode">Semester-based</span></div>
+      <div class="modal-meta-item"><label>Intake</label><span id="modal-intake">500 seats</span></div>
+    </div>
+    <a href="#contact" class="btn-primary" onclick="closeCourseModal()" style="width:100%;justify-content:center">📩 Apply Now</a>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-tag">Testimonials</div>
+      <h2 class="section-title">What <span>People Say</span></h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card reveal">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"LPU transformed my career. The faculty are world-class, the labs are cutting-edge, and the placement support is unmatched. I got placed at Google thanks to the preparation I received here."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">AP</div>
+          <div class="testi-author-info"><strong>Riya Beri</strong><span>Alumni · Placed at Google, 2023</span></div>
+        </div>
+      </div>
+      <div class="testi-card reveal">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"As a parent, I couldn't be prouder. The holistic development LPU provides — academics, sports, arts — is exceptional. My daughter graduated with confidence and a great job in hand."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#ff6b35,#ff2d55)">PS</div>
+          <div class="testi-author-info"><strong>Shashi Kapoor</strong><span>Parent of B.Tech Graduate</span></div>
+        </div>
+      </div>
+      <div class="testi-card reveal">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"The research environment at LPU is extraordinary. With access to funded labs, international collaborations, and supportive mentors, I published 3 papers in my first year of PhD."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#00c851,#00d4ff)">MK</div>
+          <div class="testi-author-info"><strong>Dr.Sanjana Gupta</strong><span>PhD Scholar · LPU Research Lab</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AWARDS -->
+<section id="awards">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-tag">Achievements</div>
+      <h2 class="section-title">Awards & <span>Recognitions</span></h2>
+      <p class="section-desc">A decade of consistent excellence recognized at national and international levels across academics, sports, research and sustainability.</p>
+    </div>
+    <div class="awards-grid">
+      <div class="award-card reveal"><div class="award-icon">🏆</div><div><div class="award-year">2024</div><div class="award-title">Best University — NIRF Rankings</div><p class="award-desc">Ranked #1 private university in India for academic excellence and overall holistic development programs.</p></div></div>
+      <div class="award-card reveal"><div class="award-icon">🥇</div><div><div class="award-year">2024</div><div class="award-title">National Science Olympiad — Gold</div><p class="award-desc">15 students won gold medals at the National Science Olympiad; 4 students represented India internationally.</p></div></div>
+      <div class="award-card reveal"><div class="award-icon">💻</div><div><div class="award-year">2023</div><div class="award-title">Google Solution Challenge — 1st</div><p class="award-desc">LPU team ranked 1st in India at the Google Solution Challenge among 10,000+ participating teams.</p></div></div>
+      <div class="award-card reveal"><div class="award-icon">⚽</div><div><div class="award-year">2023</div><div class="award-title">AIU Sports Championship</div><p class="award-desc">Winners in 8 sports disciplines at the Association of Indian Universities national championship.</p></div></div>
+      <div class="award-card reveal"><div class="award-icon">🎭</div><div><div class="award-year">2022</div><div class="award-title">National Youth Parliament — 1st Prize</div><p class="award-desc">LPU debate team won the National Youth Parliament competition organized by Ministry of Parliamentary Affairs.</p></div></div>
+      <div class="award-card reveal"><div class="award-icon">🌍</div><div><div class="award-year">2022</div><div class="award-title">QS World University Rankings</div><p class="award-desc">Awarded QS 5-Star rating for teaching excellence, employability, facilities and internationalization.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- EVENTS -->
+<section id="events">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-tag">Latest News</div>
+      <h2 class="section-title">Upcoming <span>Events</span></h2>
+      <p class="section-desc">Stay updated with everything happening at LPU — from annual celebrations to national competitions.</p>
+    </div>
+    <div class="events-grid">
+      <div class="event-card reveal">
+        <div class="event-img">🎭</div>
+        <div class="event-body">
+          <div class="event-date">📅 November 15, 2026</div>
+          <h4>Annual Day Celebration 2026</h4>
+          <p>A grand showcase of talent featuring music, dance, drama performances and prize distribution ceremony at the main amphitheatre.</p>
+        </div>
+      </div>
+      <div class="event-card reveal">
+        <div class="event-img">⚽</div>
+        <div class="event-body">
+          <div class="event-date">📅 June 8, 2026</div>
+          <h4>Inter-University Sports Championship</h4>
+          <p>Hosting 50+ universities for athletics, swimming, basketball, and cricket tournaments on our world-class campus facilities.</p>
+        </div>
+      </div>
+      <div class="event-card reveal">
+        <div class="event-img">🔬</div>
+        <div class="event-body">
+          <div class="event-date">📅 October 20, 2026</div>
+          <h4>National Science & Tech Exhibition</h4>
+          <p>Students showcase innovative projects in robotics, renewable energy, AI and environmental science to industry leaders and VCs.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-tag">FAQ</div>
+      <h2 class="section-title">Frequently Asked <span>Questions</span></h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item reveal">
+        <div class="faq-q" onclick="toggleFaq(this)"><h4>What boards/programs does LPU follow?</h4><span class="faq-icon">+</span></div>
+        <div class="faq-a"><p>LPU offers UGC-recognized degrees across Engineering, Management, Design, Sciences, Law, and more. We are NAAC A++ accredited and ranked by NIRF. We also offer integrated NPTEL certifications, industry partnerships, and international exchange programs from Year 1.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q" onclick="toggleFaq(this)"><h4>What is the admission process?</h4><span class="faq-icon">+</span></div>
+        <div class="faq-a"><p>Submit the online application form, followed by a LPUNEST entrance exam or valid score (JEE/CLAT/NATA etc.), and a personal interaction. Admissions are merit-based with consideration for holistic development. Scholarships are available for meritorious students.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q" onclick="toggleFaq(this)"><h4>What extracurricular activities are available?</h4><span class="faq-icon">+</span></div>
+        <div class="faq-a"><p>LPU offers 200+ clubs including robotics, debate, music, art, coding, chess, yoga, swimming, cricket, theatre arts, and entrepreneurship cells. The campus hosts 600+ events annually with dedicated coaches and infrastructure.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q" onclick="toggleFaq(this)"><h4>What are the hostel and campus facilities?</h4><span class="faq-icon">+</span></div>
+        <div class="faq-a"><p>LPU's 600-acre campus includes fully furnished hostels for boys and girls with 24/7 security, Wi-Fi, gyms, and canteens. The campus has hospitals, banks, shopping areas, cinema, and sports complexes — a complete township for students.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q" onclick="toggleFaq(this)"><h4>How is the placement record?</h4><span class="faq-icon">+</span></div>
+        <div class="faq-a"><p>LPU maintains a 93%+ placement rate with over 600+ companies visiting campus annually including Google, Amazon, Microsoft, Infosys, TCS, Wipro, and ISRO. The highest package offered is ₹3 Crore per annum. Our dedicated placement cell works year-round for student success.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q" onclick="toggleFaq(this)"><h4>Are there scholarships available?</h4><span class="faq-icon">+</span></div>
+        <div class="faq-a"><p>Yes, LPU offers extensive scholarships including merit-based (up to 100% tuition waiver), sports, differently-abled, and defence quota scholarships. Students from economically weaker sections can also apply for government scholarships applicable at LPU.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-tag">Contact</div>
+      <h2 class="section-title">Get In <span>Touch</span></h2>
+      <p class="section-desc">Have questions about admissions, programs, or anything else? Our team is ready to help you within 24 hours.</p>
+    </div>
+    <div class="contact-grid">
+      <div class="reveal">
+        <h3>CONNECT WITH US</h3>
+        <div class="contact-detail"><div class="contact-detail-icon">📍</div><div class="contact-detail-text"><h4>Address</h4><p>Phagwara, Punjab - 144411, India</p></div></div>
+        <div class="contact-detail"><div class="contact-detail-icon">📞</div><div class="contact-detail-text"><h4>Phone</h4><p>+91-1824-517000</p></div></div>
+        <div class="contact-detail"><div class="contact-detail-icon">✉️</div><div class="contact-detail-text"><h4>Email</h4><p>admissions@lpu.in</p></div></div>
+        <div class="contact-detail"><div class="contact-detail-icon">🌐</div><div class="contact-detail-text"><h4>Website</h4><p>www.lpu.in</p></div></div>
+        <div style="margin-top:1.5rem;padding:1.2rem;border:1px solid var(--border);border-radius:12px;background:rgba(0,212,255,0.04)">
+          <h4 style="font-family:var(--font-head);font-size:.68rem;letter-spacing:2px;color:var(--accent);margin-bottom:.8rem;text-transform:uppercase">◈ Office Hours</h4>
+          <p style="font-size:.84rem;color:var(--text-mute);line-height:1.8">Mon – Fri: 9:00 AM – 5:00 PM<br>Saturday: 9:00 AM – 1:00 PM<br>Sunday: Closed</p>
+        </div>
+        <div class="map-embed">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3412.5!2d75.7!3d31.25!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzHCsDE1JzAwLjAiTiA3NcKwNDInMDAuMCJF!5e0!3m2!1sen!2sin!4v1600000000001" allowfullscreen="" loading="lazy" title="LPU Location"></iframe>
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="contact-form-card">
+          <form id="contactForm" novalidate>
+
+<input
+type="hidden"
+name="access_key"
+value="83358df4-064f-46ab-a434-caaabb4a3b06">
+
+<input
+type="hidden"
+name="subject"
+value="New Website Submission">
+
+<input
+type="hidden"
+name="from_name"
+value="LPU Website">
+            <div class="form-row">
+              <div class="form-group" id="group-name"><label for="name">Full Name</label><input type="text" id="name" name="name" placeholder="e.g.YOUR NAME"/><span class="form-error">⚠ Please enter your name</span></div>
+              <div class="form-group" id="group-email"><label for="email">Email Address</label><input type="email" id="email" name="email" placeholder="you@example.com"/><span class="form-error" id="email-error">⚠ Enter a valid email</span></div>
+            </div>
+           
+            <div class="form-group" id="group-subject">
+              <label for="subject">Subject</label>
+              <select id="subject">
+                <option value="">Select a topic...</option>
+                <option value="admissions">Admissions Inquiry</option>
+                <option value="courses">Course Information</option>
+                <option value="scholarships">Scholarships</option>
+                <option value="placement">Placements</option>
+                <option value="campus-visit">Campus Visit</option>
+                <option value="other">Other</option>
+              </select>
+              <span class="form-error">⚠ Please select a subject</span>
+            </div>
+            <div class="form-group" id="group-message"><label for="message">Message</label><textarea id="message" placeholder="Write your message here..."></textarea><span class="form-error">⚠ Please write a message</span></div>
+            <button type="submit" class="btn-submit" id="submitBtn">⚡ SEND MESSAGE</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-logo">LPU</div>
+      <p>Lovely Professional University — nurturing the innovators, leaders, and change-makers of tomorrow through excellence, research, and academic rigor since 2005.</p>
+      <div class="social-links">
+        <a class="social-link" href="#" title="Twitter/X">𝕏</a>
+        <a class="social-link" href="#" title="LinkedIn">in</a>
+        <a class="social-link" href="#" title="Facebook">f</a>
+        <a class="social-link" href="#" title="YouTube">▶</a>
+        <a class="social-link" href="#" title="Instagram">◉</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5>Quick Links</h5>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#courses">Courses</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#events">Events</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Resources</h5>
+      <ul>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Alumni</a></li>
+        <li><a href="#">Research</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Newsletter</h5>
+      <p style="font-size:.8rem;color:var(--text-mute);margin-bottom:.8rem">Get updates on admissions, events, and news.</p>
+      <div class="newsletter-input">
+        <input type="email" placeholder="you@example.com" id="newsletter-email"/>
+        <button onclick="subscribeNewsletter()">→</button>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Lovely Professional University · Phagwara, Punjab, India</p>
+    <div class="footer-links">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Sitemap</a>
+    </div>
+  </div>
+</footer>
+
+<!-- TOAST -->
+<div id="toast">
+  <div class="toast-icon">✓</div>
+  <div class="toast-text"><strong id="toast-title">MESSAGE SENT!</strong><span id="toast-msg">We'll get back to you soon.</span></div>
+</div>
+
+<!-- BACK TO TOP -->
+<button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+
+<script>
+  // ── CONFIG ──────────────────────────────────────────────────────
+
+  // ── ANNOUNCEMENT BAR ────────────────────────────────────────────
+  function closeBar(){
+    document.getElementById('announce-bar').style.display='none';
+    document.getElementById('navbar').style.top='0';
+    document.getElementById('navbar').classList.add('bar-hidden');
+  }
+
+  // ── NAVBAR ───────────────────────────────────────────────────────
+  const navbar=document.getElementById('navbar');
+  window.addEventListener('scroll',()=>{
+    navbar.classList.toggle('scrolled',window.scrollY>30);
+    const bt=document.getElementById('back-top');
+    bt.classList.toggle('visible',window.scrollY>400);
+  });
+  function toggleMenu(){document.getElementById('navLinks').classList.toggle('open')}
+  document.querySelectorAll('.nav-links a').forEach(l=>l.addEventListener('click',()=>document.getElementById('navLinks').classList.remove('open')));
+
+  // ── TYPING ANIMATION ─────────────────────────────────────────────
+  const phrases=["INDIA'S LARGEST PRIVATE UNIVERSITY","WHERE INNOVATORS ARE BUILT","YOUR CAREER STARTS HERE","EXCELLENCE · RESEARCH · INNOVATION","600 ACRES OF OPPORTUNITY","40,000+ STUDENTS & COUNTING"];
+  let phraseIndex=0,charIndex=0,isDeleting=false;
+  const typingEl=document.getElementById('typing-text');
+  function typeLoop(){
+    const cur=phrases[phraseIndex];
+    if(isDeleting)charIndex--;else charIndex++;
+    typingEl.textContent=cur.slice(0,charIndex);
+    let speed=isDeleting?40:80;
+    if(!isDeleting&&charIndex===cur.length){speed=1800;isDeleting=true;}
+    else if(isDeleting&&charIndex===0){isDeleting=false;phraseIndex=(phraseIndex+1)%phrases.length;speed=400;}
+    setTimeout(typeLoop,speed);
+  }
+  setTimeout(typeLoop,1200);
+
+  // ── SCROLL REVEAL ────────────────────────────────────────────────
+  const ro=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+  // ── STATS COUNTER ────────────────────────────────────────────────
+  function animateCounter(el,target){
+    let c=0,inc=Math.ceil(target/120);
+    const t=setInterval(()=>{c+=inc;if(c>=target){c=target;clearInterval(t)}el.textContent=c.toLocaleString()+'+';},16);
+  }
+  const so=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){document.querySelectorAll('.stat-number[data-target]').forEach((el,i)=>setTimeout(()=>animateCounter(el,parseInt(el.getAttribute('data-target'))),i*150));so.disconnect();}});
+  },{threshold:.3});
+  so.observe(document.getElementById('stats'));
+
+  // ── THEME TOGGLE ─────────────────────────────────────────────
+  (function(){
+    const saved=localStorage.getItem('lpu-theme');
+    if(saved==='light'){document.body.classList.add('light-mode');document.getElementById('theme-toggle').textContent='🌙';}
+  })();
+  function toggleTheme(){
+    const isLight=document.body.classList.toggle('light-mode');
+    document.getElementById('theme-toggle').textContent=isLight?'🌙':'☀️';
+    localStorage.setItem('lpu-theme',isLight?'light':'dark');
+  }
+
+  // ── FEE CALC DROPDOWN TOGGLE ─────────────────────────────────
+  let feeCalcOpen=false;
+  function toggleFeeCalc(){
+    feeCalcOpen=!feeCalcOpen;
+    document.getElementById('fee-calc-panel').classList.toggle('open',feeCalcOpen);
+    document.getElementById('fee-calc-tab').setAttribute('aria-expanded',feeCalcOpen);
+    if(feeCalcOpen)calcFees();
+  }
+
+  // ── FEE CALCULATOR ───────────────────────────────────────────
+  const TUITION={
+    cse:{btech:175000,mtech:145000,bca:95000,mca:115000,phd:90000},
+    mba:{btech:155000,mtech:135000,bca:85000,mca:105000,phd:80000},
+    design:{btech:165000,mtech:140000,bca:90000,mca:110000,phd:85000},
+    law:{btech:130000,mtech:120000,bca:80000,mca:100000,phd:75000},
+    pharmacy:{btech:150000,mtech:130000,bca:88000,mca:108000,phd:82000},
+    agriculture:{btech:120000,mtech:110000,bca:75000,mca:95000,phd:70000}
+  };
+  const SPEC_PREMIUM={cs:0,aiml:15000,cybersec:12000,ds:10000,iot:8000};
+  const HOSTEL_COST={none:0,shared:55000,double:75000,single:110000};
+  const MESS_COST={none:0,shared:45000,double:45000,single:45000};
+  const LAB_FEE=18000;
+  const ADDON_COST={laptop:45000,gym:12000,insurance:5000,abroad:85000};
+  const PROGRAM_YEARS={btech:4,mtech:2,bca:3,mca:2,phd:3};
+  const SCHOLARSHIPS=[
+    {label:'None',pct:0},{label:'Merit A (25%)',pct:0.25},
+    {label:'Merit B (50%)',pct:0.50},{label:'JEE Adv (75%)',pct:0.75},
+    {label:'Full Free (100%)',pct:1.0}
+  ];
+  function updateScholarLabel(){
+    const v=parseInt(document.getElementById('calc-scholarship').value);
+    document.getElementById('scholar-label').textContent=SCHOLARSHIPS[v].label;
+  }
+  function toggleCalcCheck(el){el.classList.toggle('checked')}
+  function fmt(n){return '₹'+n.toLocaleString('en-IN')}
+  function calcFees(){
+    const school=document.getElementById('calc-school').value;
+    const prog=document.getElementById('calc-program').value;
+    const spec=document.getElementById('calc-spec').value;
+    const hostel=document.getElementById('calc-hostel').value;
+    const scholarIdx=parseInt(document.getElementById('calc-scholarship').value);
+    const tuition=(TUITION[school]?.[prog]||150000)+SPEC_PREMIUM[spec];
+    const hostelCost=HOSTEL_COST[hostel],messCost=MESS_COST[hostel];
+    let addonTotal=0;
+    const addonMap={laptop:'chk-laptop',gym:'chk-gym',insurance:'chk-insurance',abroad:'chk-abroad'};
+    Object.entries(addonMap).forEach(([key,id])=>{if(document.getElementById(id)?.classList.contains('checked'))addonTotal+=ADDON_COST[key];});
+    const scholarPct=SCHOLARSHIPS[scholarIdx].pct;
+    const discount=Math.round(tuition*scholarPct);
+    const annual=(tuition-discount)+LAB_FEE+hostelCost+messCost+addonTotal;
+    document.getElementById('res-tuition').textContent=fmt(tuition);
+    document.getElementById('res-lab').textContent=fmt(LAB_FEE);
+    document.getElementById('res-hostel').textContent=hostelCost>0?fmt(hostelCost):'Day Scholar';
+    document.getElementById('res-mess').textContent=messCost>0?fmt(messCost):'N/A';
+    document.getElementById('res-addons').textContent=fmt(addonTotal);
+    document.getElementById('res-discount').textContent=discount>0?'-'+fmt(discount):'₹0';
+    document.getElementById('res-total').textContent=fmt(annual);
+    const schInfo=document.getElementById('scholarship-info');
+    if(scholarIdx>0){schInfo.style.display='flex';document.getElementById('scholar-name').textContent=SCHOLARSHIPS[scholarIdx].label+' Applied!';}
+    else schInfo.style.display='none';
+    const years=PROGRAM_YEARS[prog]||4;
+    document.getElementById('res-program-total').textContent=fmt(annual*years);
+    document.getElementById('res-duration-label').textContent=years+'-Year Total';
+    document.getElementById('emi-options').innerHTML=[3,6,12].map((m,i)=>`<div class="emi-option${i===1?' active':''}" onclick="this.parentElement.querySelectorAll('.emi-option').forEach(e=>e.classList.remove('active'));this.classList.add('active')"><span class="emi-months">${m} Months</span><span class="emi-amount">${fmt(Math.round(annual/m))}/mo</span></div>`).join('');
+  }
+
+  // ── AI CHATBOT ───────────────────────────────────────────────
+  const KB={
+    'admission':['Admissions at LPU are based on LPUNEST scores, JEE/NEET, Class 12 marks, or management quota. Applications open Jan–May each year. Call our helpline at 1800-102-4431 for real-time seat availability.','Key steps: ① Online Application → ② LPUNEST / Direct Admission → ③ Document Verification → ④ Fee Payment → ⑤ Reporting. Scholarship tests are held simultaneously!'],
+    'fee':['LPU tuition ranges from ₹75,000–₹1,90,000/year depending on the program. Open the Fee Calculator at the bottom of the page for a personalized estimate with hostels, add-ons, and scholarships!','Semester fees can be paid online via bank transfer, UPI, or education loans. HDFC Credila, SBI Scholar, and Axis Bank provide special LPU student loan rates.'],
+    'hostel':['LPU has 5-star campus accommodation: 3-Sharing (₹55k/yr), Double (₹75k/yr), and AC Single (₹1.1L/yr). 24/7 security, WiFi, laundry, and medical facilities included.','All hostels have CCTV surveillance, biometric entry, 24hr hot water, mess with 4 daily meals, and common rooms with gaming/TV. Boys and girls hostels are in separate zones.'],
+    'placement':['LPU achieved 93%+ placement rate in 2024. Top recruiters: Google (₹45L CTC), Amazon (₹40L), Microsoft, TCS, Wipro, Infosys, and 900+ companies visit annually.','Highest package: ₹2.5 Crore (International). Average CS package: ₹8.5 LPA. Our Career Services team provides mock interviews, resume workshops, and industry networking.'],
+    'scholarship':['LPU offers: LPUNEST Merit Scholarship (up to 100%), Sports Scholarship, PM Scholarship, State Merit, Sibling Discount, and JEE Advanced Scholarship. Open the Fee Calculator to see your discount!','Scholarship renewal requires 7.0+ CGPA. Up to 3,000 students receive full tuition waivers each year.'],
+    'campus':['600-acre campus with 3,000+ classrooms, 200+ labs, Olympic-size pool, cricket ground, shooting range, F1 simulator, and a student city with banks, cafes, hospitals, and malls!','LPU has a 10,000-capacity auditorium, innovation lab, 24/7 library with 5 lakh books, food court with 40+ outlets, and a meditation center. Truly a self-contained city!'],
+    'course':['LPU offers 200+ programs: B.Tech, MBA, BCA, MCA, B.Des, BBA, B.Pharm, B.Arch, B.Sc, LLB, and Ph.D. across 30+ schools.','New-age programs include B.Tech in AI/ML, Cyber Security, IoT, Blockchain, and Data Science with industry-integrated curriculum and semester internships.'],
+    'research':['LPU has 200+ research labs funded by DRDO, DST, ICMR, NASA, and global corporations. Faculty have published 5,000+ papers in Scopus/WoS indexed journals.','PhD scholars receive ₹25,000/month fellowship. LPU ranks in QS World University Rankings with notable research in satellite communication and nano-materials.'],
+    'default':["I'm LPU's AI Assistant! I can help with admissions, fees, hostel, placements, scholarships, campus life, courses, and research. What would you like to know? 😊","Great question! Could you be more specific? You can ask about admissions, fees, placements, hostel, scholarships, or campus facilities.","Try asking about our courses, fee structure, placement stats, scholarship opportunities, or campus life. 🎓"]
+  };
+  let chatOpen=false;
+  function toggleChat(){
+    chatOpen=!chatOpen;
+    document.getElementById('chat-window').classList.toggle('open',chatOpen);
+    document.getElementById('chat-fab').style.transform=chatOpen?'scale(0.9)':'';
+    if(chatOpen&&document.getElementById('chatMessages').children.length===0)
+      setTimeout(()=>addBotMsg("👋 Hello! I'm LPU's AI Assistant. How can I help you today? Ask me about admissions, fees, placements, hostel, or anything about LPU!"),400);
+  }
+  function addBotMsg(text){
+    const msgs=document.getElementById('chatMessages');
+    const typing=document.createElement('div');
+    typing.className='chat-msg bot';
+    typing.innerHTML='<div class="msg-avatar">🎓</div><div class="chat-typing"><span></span><span></span><span></span></div>';
+    msgs.appendChild(typing);msgs.scrollTop=msgs.scrollHeight;
+    setTimeout(()=>{
+      typing.remove();
+      const msg=document.createElement('div');
+      msg.className='chat-msg bot';
+      msg.innerHTML=`<div class="msg-avatar">🎓</div><div class="msg-bubble">${text}</div>`;
+      msgs.appendChild(msg);msgs.scrollTop=msgs.scrollHeight;
+    },900+Math.random()*600);
+  }
+  function addUserMsg(text){
+    const msgs=document.getElementById('chatMessages');
+    const msg=document.createElement('div');
+    msg.className='chat-msg user';
+    msg.innerHTML=`<div class="msg-avatar">👤</div><div class="msg-bubble">${text}</div>`;
+    msgs.appendChild(msg);msgs.scrollTop=msgs.scrollHeight;
+  }
+  function getBotReply(input){
+    const q=input.toLowerCase();
+    const keys=Object.keys(KB).filter(k=>k!=='default');
+    const matched=keys.find(k=>q.includes(k)||(k==='admission'&&(q.includes('apply')||q.includes('enroll')))||(k==='fee'&&(q.includes('cost')||q.includes('price')||q.includes('tuition')))||(k==='hostel'&&(q.includes('dorm')||q.includes('accommodation')))||(k==='placement'&&(q.includes('job')||q.includes('recruit')||q.includes('package')))||(k==='course'&&(q.includes('program')||q.includes('degree')||q.includes('study')))||(k==='scholarship'&&(q.includes('waiver')||q.includes('discount')||q.includes('free')))||(k==='campus'&&(q.includes('facility')||q.includes('infra')))||(k==='research'&&(q.includes('phd')||q.includes('paper'))));
+    const pool=matched?KB[matched]:KB['default'];
+    return pool[Math.floor(Math.random()*pool.length)];
+  }
+  function sendChat(){
+    const inp=document.getElementById('chatInput');
+    const text=inp.value.trim();if(!text)return;
+    inp.value='';addUserMsg(text);
+    setTimeout(()=>addBotMsg(getBotReply(text)),200);
+  }
+  function sendQuick(text){
+    if(!chatOpen)toggleChat();
+    addUserMsg(text);setTimeout(()=>addBotMsg(getBotReply(text)),200);
+  }
+
+  // ── WELCOME ──────────────────────────────────────────────────────
+  function openWelcome(){document.getElementById('welcome-panel').classList.add('active');document.getElementById('overlay').classList.add('active')}
+  function closeWelcome(){document.getElementById('welcome-panel').classList.remove('active');document.getElementById('overlay').classList.remove('active')}
+  window.addEventListener('load',()=>setTimeout(openWelcome,1500));
+
+  // ── GALLERY LIGHTBOX ─────────────────────────────────────────────
+  function openLightbox(el){
+    const src=el.querySelector('img').src;
+    document.getElementById('lightbox-img').src=src;
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+  function closeLightbox(){document.getElementById('lightbox').classList.remove('open');document.body.style.overflow='';}
+  document.getElementById('lightbox').addEventListener('click',e=>{if(e.target===e.currentTarget)closeLightbox()});
+
+  // ── COURSE MODAL ─────────────────────────────────────────────────
+  function openCourseModal(d){
+    document.getElementById('modal-emoji').textContent=d.emoji;
+    document.getElementById('modal-tag').textContent=d.tag;
+    document.getElementById('modal-title').textContent=d.title;
+    document.getElementById('modal-desc').textContent=d.desc;
+    document.getElementById('modal-duration').textContent=d.duration;
+    document.getElementById('modal-degree').textContent=d.degree;
+    document.getElementById('modal-mode').textContent=d.mode;
+    document.getElementById('modal-intake').textContent=d.intake;
+    document.getElementById('course-modal').classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+  function closeCourseModal(){document.getElementById('course-modal').classList.remove('open');document.body.style.overflow='';}
+  document.getElementById('course-modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeCourseModal()});
+
+  // ── FAQ ──────────────────────────────────────────────────────────
+  function toggleFaq(el){
+    const item=el.parentElement;
+    const wasOpen=item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));
+    if(!wasOpen)item.classList.add('open');
+  }
+
+  // ── TOAST ────────────────────────────────────────────────────────
+  function showToast(title,msg,isError=false){
+    const t=document.getElementById('toast');
+    document.getElementById('toast-title').textContent=title;
+    document.getElementById('toast-msg').textContent=msg;
+    t.classList.toggle('error-toast',isError);
+    t.querySelector('.toast-icon').textContent=isError?'✕':'✓';
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),4000);
+  }
+
+  // ── NEWSLETTER ───────────────────────────────────────────────────
+  function subscribeNewsletter(){
+    const el=document.getElementById('newsletter-email');
+    const v=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(!v.test(el.value.trim())){showToast('INVALID EMAIL','Please enter a valid email address.',true);return;}
+    showToast('SUBSCRIBED! ✓','You will receive our latest updates.');
+    el.value='';
+  }
+
+  // ── FORM ─────────────────────────────────────────────────────────
+  document
+.getElementById('contactForm')
+.addEventListener('submit', async function(e){
+
+  e.preventDefault();
+
+  const btn = document.getElementById('submitBtn');
+
+  btn.textContent = '⏳ SENDING...';
+
+  btn.disabled = true;
+
+  try {
+
+    const formData = new FormData(this);
+
+    const response = await fetch(
+      'https://api.web3forms.com/submit',
+      {
+        method: 'POST',
+        body: formData
+      }
+    );
+
+    const data = await response.json();
+
+    if(data.success){
+
+      showToast(
+        'MESSAGE SENT! ✓',
+        "We'll get back to you soon."
+      );
+
+      this.reset();
+
+    } else {
+
+      console.log(data);
+
+      showToast(
+        'ERROR',
+        'Failed to send message.',
+        true
+      );
+
+    }
+
+  } catch(error){
+
+    console.error(error);
+
+    showToast(
+      'ERROR',
+      'Something went wrong.',
+      true
+    );
+
+  }
+
+  btn.textContent = '⚡ SEND MESSAGE';
+
+  btn.disabled = false;
+
+});
+  ['name','email','subject','message'].forEach(id=>{
+    const el=document.getElementById(id);
+    el.addEventListener((id==='subject'?'change':'input'),()=>document.getElementById('group-'+id).classList.remove('error'));
+  });
+</script>
+</body>
+</html>
